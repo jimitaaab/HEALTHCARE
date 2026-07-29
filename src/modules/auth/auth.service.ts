@@ -1,6 +1,6 @@
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
-import { jwtUtils } from '../../utils/jwt';
+import { jwtUtils } from "../../utils/jwt";
 import { loginUserPayload } from "./auth.interface";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -11,7 +11,7 @@ const loginUser = async (payload: loginUserPayload) => {
     where: { email },
   });
 
-  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  const isPasswordMatched = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordMatched) {
     throw new Error("Invalid password");
@@ -19,7 +19,6 @@ const loginUser = async (payload: loginUserPayload) => {
 
   const jwtpayload = {
     id: user.id,
-    name: user.name,
     email: user.email,
     role: user.role,
   };
@@ -36,12 +35,15 @@ const loginUser = async (payload: loginUserPayload) => {
     config.jwt_refresh_ExpiresIn as jwt.SignOptions,
   );
 
-  return { user, accessToken, refreshToken };
+  return { accessToken, refreshToken };
 };
 
-const token = async (token: string) => {
+const refreshToken = async (token: string) => {
   try {
-    const verifyRefreshtoken = jwtUtils.verifyToken(token, config.jwt_refresh_Secret);
+    const verifyRefreshtoken = jwtUtils.verifyToken(
+      token,
+      config.jwt_refresh_Secret,
+    );
     if (!verifyRefreshtoken.success) {
       throw new Error(verifyRefreshtoken.message);
     }
@@ -51,13 +53,12 @@ const token = async (token: string) => {
       where: { id },
     });
 
-    if (user.activeStatus != "active") {
+    if (!user.isActive) {
       throw new Error("User is not active");
     }
 
     const jwtpayload = {
       id: user.id,
-      name: user.name,
       email: user.email,
       role: user.role,
     };
@@ -69,14 +70,12 @@ const token = async (token: string) => {
     );
 
     return { accessToken };
-     
-  }
-  catch (error) {
+  } catch (error) {
     throw new Error("Invalid refresh token");
   }
-}
+};
 
 export const authService = {
   loginUser,
-  refreshToken: token,
+  refreshToken,
 };

@@ -12,7 +12,6 @@ declare global {
     interface Request {
       user?: {
         email: string;
-        name: string;
         id: string;
         role: Role;
       };
@@ -25,7 +24,7 @@ const auth = (...requiredRoles: Role[]) => {
     const token = req.cookies.accessToken
       ? req.cookies.accessToken
       : req.headers.authorization?.startsWith("Bearer ")
-        ? req.headers.authorization?.split(" ")[1]
+        ? req.headers.authorization.split(" ")[1]
         : req.headers.authorization;
     if (!token) {
       throw new Error("No token provided");
@@ -36,7 +35,7 @@ const auth = (...requiredRoles: Role[]) => {
     if (!verifiedToken.success) {
       throw new Error(verifiedToken.message);
     }
-    const { email, name, id, role } = verifiedToken.data as JwtPayload;
+    const { email, id, role } = verifiedToken.data as JwtPayload;
 
     if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
       return res.status(httpStatus.FORBIDDEN).json({
@@ -47,7 +46,7 @@ const auth = (...requiredRoles: Role[]) => {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id, email, name, role },
+      where: { id },
     });
 
     if (!user) {
@@ -58,7 +57,7 @@ const auth = (...requiredRoles: Role[]) => {
       });
     }
 
-    if (user.activeStatus != "active") {
+    if (!user.isActive) {
       return res.status(httpStatus.FORBIDDEN).json({
         success: false,
         statusCode: httpStatus.FORBIDDEN,
@@ -66,7 +65,7 @@ const auth = (...requiredRoles: Role[]) => {
       });
     }
 
-    req.user = { email, name, id, role };
+    req.user = { email, id, role };
     next();
   });
 };

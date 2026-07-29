@@ -4,52 +4,61 @@ import { userService } from "./user.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 
-const registeruser = catchAsync(
+const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const payload = req.body;
-    const user = await userService.registerIntoDB(payload);
+    const user = await userService.createUser(req.body);
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
-      message: "User registered successfully",
-      data: user,
+      message: "User created successfully",
+      data: { id: user.id, email: user.email, role: user.role },
     });
   },
 );
 
-const getMyProfile = catchAsync(
+const getUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    // const { accessToken } = req.cookies;
-    // console.log("Access Token:", accessToken);
-    const profile = await userService.getUserFromDB(req.user?.id as string);
+    const { search, role, isActive, page, limit } = req.query;
+
+    const result = await userService.getUsers({
+      search: search as string,
+      role: role as any,
+      isActive: isActive === "true" ? true : isActive === "false" ? false : undefined,
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+    });
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "User profile fetched successfully",
-      data: profile,
+      message: "Users retrieved successfully",
+      data: result.users,
+      meta: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+      },
     });
   },
 );
 
-const updateMyProfile = catchAsync(
+const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id as string;
-    const payload = req.body;
-    const updatedUser = await userService.updateuserInDB(userId, payload);
+    const id = req.params.id as string;
+    const user = await userService.updateUser(id, req.body);
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "User profile updated successfully",
-      data: updatedUser,
+      message: "User updated successfully",
+      data: { id: user.id, email: user.email, role: user.role, isActive: user.isActive },
     });
-  }
-)
+  },
+);
 
 export const userController = {
-  registeruser,
-  getMyProfile,
-  updateMyProfile,
+  createUser,
+  getUsers,
+  updateUser,
 };
