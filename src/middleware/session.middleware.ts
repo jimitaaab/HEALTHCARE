@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../shared/utils/asyncHandler";
-import config from "../config";
+import config from "../config/db";
 import { jwtUtils } from "../shared/utils/logger";
 import { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status-codes";

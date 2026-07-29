@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcryptjs";
-import config from "../../config";
+import config from "../../config/db";
 import {
   CreateUserPayload,
   UpdateUserPayload,

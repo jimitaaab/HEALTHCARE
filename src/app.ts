@@ -1,9 +1,8 @@
 import cookieParser from "cookie-parser";
 import express, { Application, Request, Response } from "express";
-import config from "./config";
+import config from "./config/db";
 import cors from "cors";
-import { userRoutes } from "./modules/users/user.route";
-import { doctorRoutes } from "./modules/doctors/doctor.route";
+import router from "./routes";
 import errorHandler from "./middleware/error.middleware";
 
 const app: Application = express();
@@ -22,8 +21,7 @@ app.use(
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, World!");
 });
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/doctors", doctorRoutes);
+app.use("/api/v1", router);
 
 app.use(errorHandler);
 
