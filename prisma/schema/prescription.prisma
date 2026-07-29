@@ -1,0 +1,19 @@
+model Prescription {
+  id          String             @id @default(cuid())
+  patientId   String             @map("patient_id")
+  doctorId    String             @map("doctor_id")
+  diagnosisId String?            @map("diagnosis_id")
+  drug        String
+  dosage      String
+  frequency   String
+  duration    String
+  status      PrescriptionStatus @default(ACTIVE)
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  patient   Patient   @relation(fields: [patientId], references: [id])
+  doctor    Doctor    @relation(fields: [doctorId], references: [id])
+  diagnosis Diagnosis? @relation(fields: [diagnosisId], references: [id])
+
+  @@map("prescriptions")
+}

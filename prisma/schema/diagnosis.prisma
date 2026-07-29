@@ -1,0 +1,11 @@
+model Diagnosis {
+  id              String  @id @default(cuid())
+  medicalRecordId String  @map("medical_record_id")
+  condition       String
+  code            String?
+
+  medicalRecord  MedicalRecord  @relation(fields: [medicalRecordId], references: [id])
+  prescriptions  Prescription[]
+
+  @@map("diagnoses")
+}

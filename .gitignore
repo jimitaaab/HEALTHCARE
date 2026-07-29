@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+build
+generated
+/generated/prisma
+planning.md
+/generated/prisma

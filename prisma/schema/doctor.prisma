@@ -1,0 +1,18 @@
+model Doctor {
+  id             String    @id @default(cuid())
+  userId         String?   @unique @map("user_id")
+  name           String
+  gender         Gender
+  specialty      String
+  scheduleConfig Json?     @map("schedule_config")
+  isActive       Boolean   @default(true) @map("is_active")
+  deactivatedAt  DateTime? @map("deactivated_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user         User?         @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+  prescriptions Prescription[]
+
+  @@map("doctors")
+}

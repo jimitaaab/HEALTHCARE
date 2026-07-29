@@ -1,0 +1,21 @@
+model Patient {
+  id           String    @id @default(cuid())
+  userId       String?   @unique @map("user_id")
+  name         String
+  dob          DateTime
+  gender       Gender
+  contactInfo  String?   @map("contact_info")
+  demographics Json?
+  isActive     Boolean   @default(true) @map("is_active")
+  deactivatedAt DateTime? @map("deactivated_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user            User?             @relation(fields: [userId], references: [id])
+  appointments    Appointment[]
+  medicalRecords  MedicalRecord[]
+  prescriptions   Prescription[]
+  claims Claim[]
+
+  @@map("patients")
+}
