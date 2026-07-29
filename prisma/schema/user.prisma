@@ -10,7 +10,8 @@ model User {
 
   patient       Patient?
   doctor        Doctor?
-  notifications Notification[]
+  notifications  Notification[]
+  refreshTokens  RefreshToken[]
 
   @@map("users")
 }

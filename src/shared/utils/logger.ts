@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 const createToken = (
   payload: JwtPayload,
   secret: string,
-  expiresIn: jwt.SignOptions,
+  expiresIn: string | number,
 ) => {
   return jwt.sign(payload, secret, { expiresIn } as jwt.SignOptions);
 };
