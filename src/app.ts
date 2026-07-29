@@ -1,10 +1,10 @@
 import cookieParser from "cookie-parser";
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import config from "./config";
 import cors from "cors";
-import httpStatus from "http-status-codes";
 import { userRoutes } from "./modules/users/user.route";
-import { authRoutes } from "./modules/auth/auth.route";
+import { doctorRoutes } from "./modules/doctors/doctor.route";
+import errorHandler from "./middleware/error.middleware";
 
 const app: Application = express();
 
@@ -23,14 +23,8 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, World!");
 });
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/doctors", doctorRoutes);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-    success: false,
-    statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-    message: err.message || "Internal server error",
-  });
-});
+app.use(errorHandler);
 
 export default app;

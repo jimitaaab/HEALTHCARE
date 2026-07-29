@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
+import catchAsync from "../shared/utils/asyncHandler";
 import { Role } from "../../generated/prisma/client";
 import config from "../config";
-import { jwtUtils } from "../utils/jwt";
+import { jwtUtils } from "../shared/utils/logger";
 import { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status-codes";
 import { prisma } from "../lib/prisma";
