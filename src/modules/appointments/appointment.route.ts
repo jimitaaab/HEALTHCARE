@@ -24,7 +24,7 @@ router.patch(
 );
 
 router.post(
-  "/:id/override",
+  "/override",
   auth(Role.RECEPTIONIST),
   appointmentController.overrideAppointment,
 );
