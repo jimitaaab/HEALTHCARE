@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../config/prisma";
 import { PatientFilters, UpdatePatientPayload, PatientSearchQuery } from "./patient.interface";
 
 const getAllPatients = async (filters: PatientFilters) => {

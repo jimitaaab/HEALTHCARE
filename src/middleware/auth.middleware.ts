@@ -1,21 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../shared/utils/asyncHandler";
-import config from "../config/db";
+import config from "../config/env";
 import { jwtUtils } from "../shared/utils/logger";
 import { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status-codes";
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        email: string;
-        id: string;
-        role: string;
-      };
-    }
-  }
-}
 
 const auth = (...requiredRoles: string[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {

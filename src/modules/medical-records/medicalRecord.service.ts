@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../config/prisma";
 import { CreateMedicalRecordPayload } from "./medicalRecord.interface";
 
 const getPatientHistory = async (

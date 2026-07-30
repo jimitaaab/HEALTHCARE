@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import express, { Application, Request, Response } from "express";
-import config from "./config/db";
+import config from "./config/env";
 import cors from "cors";
 import router from "./routes";
 import errorHandler from "./middleware/error.middleware";
