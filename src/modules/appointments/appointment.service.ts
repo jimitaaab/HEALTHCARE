@@ -195,6 +195,32 @@ const checkOut = async (appointmentId: string) => {
   return appointment;
 };
 
+const cancelAppointment = async (appointmentId: string, userId: string, userRole: string) => {
+  const existing = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+  });
+  if (!existing) throw new Error("Appointment not found");
+
+  if (userRole === "PATIENT" && existing.patientId !== userId) {
+    throw new Error("You can only cancel your own appointments");
+  }
+
+  if (existing.status === "COMPLETED" || existing.status === "CANCELLED") {
+    throw new Error("Cannot cancel a completed or already cancelled appointment");
+  }
+
+  const appointment = await prisma.appointment.update({
+    where: { id: appointmentId },
+    data: { status: "CANCELLED" },
+    include: {
+      patient: { select: { id: true, name: true } },
+      doctor: { select: { id: true, name: true, specialty: true } },
+    },
+  });
+
+  return appointment;
+};
+
 export const appointmentService = {
   getAppointments,
   createAppointment,
@@ -202,4 +228,5 @@ export const appointmentService = {
   overrideAppointment,
   checkIn,
   checkOut,
+  cancelAppointment,
 };

@@ -107,6 +107,24 @@ const checkOut = catchAsync(
   },
 );
 
+const cancelAppointment = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id as string;
+    const appointment = await appointmentService.cancelAppointment(
+      id,
+      req.user!.id,
+      req.user!.role,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Appointment cancelled successfully",
+      data: appointment,
+    });
+  },
+);
+
 export const appointmentController = {
   getAppointments,
   createAppointment,
@@ -114,4 +132,5 @@ export const appointmentController = {
   overrideAppointment,
   checkIn,
   checkOut,
+  cancelAppointment,
 };

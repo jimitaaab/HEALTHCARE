@@ -4,3 +4,13 @@ export interface DoctorFilters {
   page?: number;
   limit?: number;
 }
+
+export interface UpdateDoctorPayload {
+  name?: string;
+  gender?: string;
+  specialty?: string;
+}
+
+export interface ScheduleQuery {
+  date?: string;
+}

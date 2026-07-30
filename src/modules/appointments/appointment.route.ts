@@ -33,6 +33,13 @@ router.post(
   appointmentController.overrideAppointment,
 );
 
+router.delete(
+  "/:id",
+  auth,
+  requireRole("PATIENT", "RECEPTIONIST"),
+  appointmentController.cancelAppointment,
+);
+
 router.post(
   "/:id/check-in",
   auth,

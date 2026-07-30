@@ -1,5 +1,5 @@
 import { prisma } from "../../config/prisma";
-import { CreateDiagnosisPayload } from "./diagnosis.interface";
+import { CreateDiagnosisPayload } from "./medicalRecord.interface";
 
 const addDiagnosis = async (
   medicalRecordId: string,

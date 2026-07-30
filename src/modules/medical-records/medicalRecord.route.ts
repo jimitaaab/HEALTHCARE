@@ -6,17 +6,31 @@ import requireRole from "../../middleware/role.middleware";
 const router = Router();
 
 router.get(
-  "/:id/history",
+  "/me",
   auth,
-  requireRole("PATIENT", "DOCTOR"),
+  requireRole("PATIENT"),
+  medicalRecordController.getMyHistory,
+);
+
+router.get(
+  "/patient/:patientId",
+  auth,
+  requireRole("DOCTOR"),
   medicalRecordController.getPatientHistory,
 );
 
 router.post(
-  "/:id/records",
+  "/patient/:patientId",
   auth,
   requireRole("DOCTOR"),
   medicalRecordController.createMedicalRecord,
+);
+
+router.post(
+  "/:recordId/diagnoses",
+  auth,
+  requireRole("DOCTOR"),
+  medicalRecordController.addDiagnosis,
 );
 
 export const medicalRecordRoutes = router;
