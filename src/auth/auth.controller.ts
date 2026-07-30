@@ -30,41 +30,7 @@ const login = catchAsync(
   },
 );
 
-const logout = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.body.refreshToken;
-    if (!token) throw new Error("Refresh token is required");
-
-    await authService.logout(token);
-
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Logged out successfully",
-      data: null,
-    });
-  },
-);
-
-const refreshToken = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.body.refreshToken;
-    if (!token) throw new Error("Refresh token is required");
-
-    const result = await authService.refreshToken(token);
-
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Token refreshed successfully",
-      data: result,
-    });
-  },
-);
-
 export const authController = {
   signup,
   login,
-  logout,
-  refreshToken,
 };

@@ -4,7 +4,6 @@ import config from "../config/db";
 import { jwtUtils } from "../shared/utils/logger";
 import { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status-codes";
-import { prisma } from "../lib/prisma";
 
 const session = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -32,20 +31,6 @@ const session = catchAsync(
         success: false,
         statusCode: httpStatus.UNAUTHORIZED,
         message: "Session expired or invalid",
-      });
-    }
-
-    const { id } = verifiedToken.data as JwtPayload;
-
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!user || !user.isActive) {
-      return res.status(httpStatus.UNAUTHORIZED).json({
-        success: false,
-        statusCode: httpStatus.UNAUTHORIZED,
-        message: "User session no longer valid",
       });
     }
 

@@ -16,17 +16,9 @@ const getAppointments = async (
   const where: Prisma.AppointmentWhereInput = {};
 
   if (userRole === "DOCTOR") {
-    const doctor = await prisma.doctor.findUnique({
-      where: { userId },
-    });
-    if (!doctor) throw new Error("Doctor profile not found");
-    where.doctorId = doctor.id;
+    where.doctorId = userId;
   } else if (userRole === "PATIENT") {
-    const patient = await prisma.patient.findUnique({
-      where: { userId },
-    });
-    if (!patient) throw new Error("Patient profile not found");
-    where.patientId = patient.id;
+    where.patientId = userId;
   }
 
   if (doctorId) where.doctorId = doctorId;
@@ -36,7 +28,7 @@ const getAppointments = async (
     startDate.setHours(0, 0, 0, 0);
     const endDate = new Date(date);
     endDate.setHours(23, 59, 59, 999);
-    where.datetime = { gte: startDate, lte: endDate };
+    where.scheduledAt = { gte: startDate, lte: endDate };
   }
 
   const skip = (page - 1) * limit;
@@ -46,7 +38,7 @@ const getAppointments = async (
       where,
       skip,
       take: limit,
-      orderBy: { datetime: "desc" },
+      orderBy: { scheduledAt: "desc" },
       include: {
         patient: { select: { id: true, name: true } },
         doctor: { select: { id: true, name: true, specialty: true } },
@@ -59,13 +51,13 @@ const getAppointments = async (
 };
 
 const createAppointment = async (payload: CreateAppointmentPayload) => {
-  const { patientId, doctorId, datetime } = payload;
-  const appointmentDate = new Date(datetime);
+  const { patientId, doctorId, scheduledAt } = payload;
+  const appointmentDate = new Date(scheduledAt);
 
   const conflict = await prisma.appointment.findFirst({
     where: {
       doctorId,
-      datetime: appointmentDate,
+      scheduledAt: appointmentDate,
       status: { in: ["BOOKED", "CHECKED_IN"] },
     },
   });
@@ -76,7 +68,7 @@ const createAppointment = async (payload: CreateAppointmentPayload) => {
     data: {
       patientId,
       doctorId,
-      datetime: appointmentDate,
+      scheduledAt: appointmentDate,
       status: "BOOKED",
     },
     include: {
@@ -99,15 +91,12 @@ const updateAppointment = async (
   });
   if (!existing) throw new Error("Appointment not found");
 
-  if (userRole === "PATIENT") {
-    const patient = await prisma.patient.findUnique({ where: { userId } });
-    if (!patient || existing.patientId !== patient.id) {
-      throw new Error("You can only update your own appointments");
-    }
+  if (userRole === "PATIENT" && existing.patientId !== userId) {
+    throw new Error("You can only update your own appointments");
   }
 
-  if (payload.datetime) {
-    const newDate = new Date(payload.datetime);
+  if (payload.scheduledAt) {
+    const newDate = new Date(payload.scheduledAt);
 
     if (
       existing.status !== "CANCELLED" &&
@@ -120,7 +109,7 @@ const updateAppointment = async (
     const conflict = await prisma.appointment.findFirst({
       where: {
         doctorId: existing.doctorId,
-        datetime: newDate,
+        scheduledAt: newDate,
         id: { not: appointmentId },
         status: { in: ["BOOKED", "CHECKED_IN"] },
       },
@@ -130,7 +119,7 @@ const updateAppointment = async (
   }
 
   const data: Prisma.AppointmentUpdateInput = {};
-  if (payload.datetime) data.datetime = new Date(payload.datetime);
+  if (payload.scheduledAt) data.scheduledAt = new Date(payload.scheduledAt);
   if (payload.status) data.status = payload.status;
 
   const appointment = await prisma.appointment.update({
@@ -146,17 +135,17 @@ const updateAppointment = async (
 };
 
 const overrideAppointment = async (payload: OverridePayload) => {
-  const { patientId, doctorId, datetime, reason } = payload;
+  const { patientId, doctorId, scheduledAt, reason } = payload;
 
   if (!reason) throw new Error("Override reason is required");
 
-  const appointmentDate = new Date(datetime);
+  const appointmentDate = new Date(scheduledAt);
 
   const appointment = await prisma.appointment.create({
     data: {
       patientId,
       doctorId,
-      datetime: appointmentDate,
+      scheduledAt: appointmentDate,
       status: "BOOKED",
     },
     include: {

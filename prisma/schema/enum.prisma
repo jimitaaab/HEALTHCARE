@@ -1,16 +1,3 @@
-enum Role {
-  PATIENT
-  DOCTOR
-  RECEPTIONIST
-  ADMIN
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
 enum AppointmentStatus {
   BOOKED
   CHECKED_IN
@@ -18,31 +5,9 @@ enum AppointmentStatus {
   CANCELLED
 }
 
-enum PrescriptionStatus {
-  ACTIVE
-  REFILL_REQUESTED
-  EXPIRED
-}
-
 enum InsuranceClaimStatus {
   SUBMITTED
   IN_REVIEW
   APPROVED
   REJECTED
-}
-
-enum NotificationType {
-  APPOINTMENT_REMINDER
-  MEDICATION_REMINDER
-}
-
-enum NotificationChannel {
-  SMS
-  EMAIL
-}
-
-enum NotificationStatus {
-  PENDING
-  SENT
-  FAILED
 }

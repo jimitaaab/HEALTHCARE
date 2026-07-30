@@ -4,7 +4,3 @@ export interface DoctorFilters {
   page?: number;
   limit?: number;
 }
-
-export interface AvailabilityQuery {
-  date: string;
-}

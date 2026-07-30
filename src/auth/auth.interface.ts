@@ -2,9 +2,9 @@ export interface SignupPayload {
   email: string;
   password: string;
   name: string;
-  dob: string;
-  gender: "MALE" | "FEMALE" | "OTHER";
-  contactInfo?: string;
+  dateOfBirth: string;
+  gender: string;
+  phone?: string;
 }
 
 export interface LoginPayload {
@@ -14,7 +14,6 @@ export interface LoginPayload {
 
 export interface AuthResponse {
   accessToken: string;
-  refreshToken: string;
   user: {
     id: string;
     email: string;

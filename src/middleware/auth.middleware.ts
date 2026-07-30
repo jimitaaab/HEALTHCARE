@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../shared/utils/asyncHandler";
-import { Role } from "../../generated/prisma/client";
 import config from "../config/db";
 import { jwtUtils } from "../shared/utils/logger";
 import { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status-codes";
-import { prisma } from "../lib/prisma";
 
 declare global {
   namespace Express {
@@ -13,13 +11,13 @@ declare global {
       user?: {
         email: string;
         id: string;
-        role: Role;
+        role: string;
       };
     }
   }
 }
 
-const auth = (...requiredRoles: Role[]) => {
+const auth = (...requiredRoles: string[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.accessToken
       ? req.cookies.accessToken
@@ -42,26 +40,6 @@ const auth = (...requiredRoles: Role[]) => {
         success: false,
         statusCode: httpStatus.FORBIDDEN,
         message: "You do not have permission to access this resource",
-      });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!user) {
-      return res.status(httpStatus.UNAUTHORIZED).json({
-        success: false,
-        statusCode: httpStatus.UNAUTHORIZED,
-        message: "User not found",
-      });
-    }
-
-    if (!user.isActive) {
-      return res.status(httpStatus.FORBIDDEN).json({
-        success: false,
-        statusCode: httpStatus.FORBIDDEN,
-        message: "Your account is not active",
       });
     }
 

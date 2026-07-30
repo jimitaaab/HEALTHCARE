@@ -1,15 +1,9 @@
-model Doctor {
+model Receptionist {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
-  gender    String
-  specialty String
   createdAt DateTime @default(now()) @map("created_at")
 
-  appointments  Appointment[]
-  records       MedicalRecord[]
-  prescriptions Prescription[]
-
-  @@map("doctors")
+  @@map("receptionists")
 }

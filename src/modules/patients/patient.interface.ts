@@ -5,11 +5,10 @@ export interface PatientFilters {
 }
 
 export interface UpdatePatientPayload {
-  contactInfo?: string;
-  demographics?: Record<string, any>;
+  phone?: string;
   name?: string;
-  gender?: "MALE" | "FEMALE" | "OTHER";
-  dob?: string;
+  gender?: string;
+  dateOfBirth?: string;
 }
 
 export interface PatientSearchQuery {

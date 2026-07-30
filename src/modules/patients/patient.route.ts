@@ -1,31 +1,30 @@
 import { Router } from "express";
 import { patientController } from "./patient.controller";
-import { Role } from "../../../generated/prisma/client";
 import auth from "../../middleware/auth.middleware";
 
 const router = Router();
 
 router.get(
   "/search",
-  auth(Role.DOCTOR, Role.RECEPTIONIST),
+  auth("DOCTOR", "RECEPTIONIST"),
   patientController.searchPatients,
 );
 
 router.get(
   "/",
-  auth(Role.RECEPTIONIST, Role.ADMIN),
+  auth("RECEPTIONIST", "ADMIN"),
   patientController.getAllPatients,
 );
 
 router.get(
   "/:id",
-  auth(Role.PATIENT, Role.DOCTOR, Role.RECEPTIONIST, Role.ADMIN),
+  auth("PATIENT", "DOCTOR", "RECEPTIONIST", "ADMIN"),
   patientController.getPatientById,
 );
 
 router.patch(
   "/:id",
-  auth(Role.PATIENT, Role.ADMIN),
+  auth("PATIENT", "ADMIN"),
   patientController.updatePatient,
 );
 

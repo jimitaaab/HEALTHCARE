@@ -1,11 +1,10 @@
 import { prisma } from "../../lib/prisma";
 import { PatientFilters, UpdatePatientPayload, PatientSearchQuery } from "./patient.interface";
-import { Prisma } from "../../../generated/prisma/client";
 
 const getAllPatients = async (filters: PatientFilters) => {
   const { search, page = 1, limit = 10 } = filters;
 
-  const where: Prisma.PatientWhereInput = { isActive: true };
+  const where: Record<string, any> = {};
 
   if (search) {
     where.OR = [
@@ -24,10 +23,10 @@ const getAllPatients = async (filters: PatientFilters) => {
       select: {
         id: true,
         name: true,
+        email: true,
         gender: true,
-        dob: true,
-        contactInfo: true,
-        user: { select: { email: true } },
+        dateOfBirth: true,
+        phone: true,
       },
     }),
     prisma.patient.count({ where }),
@@ -44,13 +43,12 @@ const getPatientById = async (
   const patient = await prisma.patient.findUnique({
     where: { id: patientId },
     include: {
-      user: { select: { email: true } },
       appointments: {
         take: 5,
-        orderBy: { datetime: "desc" },
+        orderBy: { scheduledAt: "desc" },
         select: {
           id: true,
-          datetime: true,
+          scheduledAt: true,
           status: true,
           doctor: { select: { id: true, name: true, specialty: true } },
         },
@@ -60,23 +58,15 @@ const getPatientById = async (
 
   if (!patient) throw new Error("Patient not found");
 
-  if (userRole === "PATIENT") {
-    const patientProfile = await prisma.patient.findUnique({
-      where: { userId },
-    });
-    if (!patientProfile || patientProfile.id !== patientId) {
-      throw new Error("You can only view your own profile");
-    }
+  if (userRole === "PATIENT" && patient.id !== userId) {
+    throw new Error("You can only view your own profile");
   }
 
   if (userRole === "DOCTOR") {
-    const doctor = await prisma.doctor.findUnique({ where: { userId } });
-    if (!doctor) throw new Error("Doctor profile not found");
-
     const hasAppointment = await prisma.appointment.findFirst({
       where: {
         patientId,
-        doctorId: doctor.id,
+        doctorId: userId,
       },
     });
 
@@ -97,24 +87,18 @@ const updatePatient = async (
   });
   if (!existing) throw new Error("Patient not found");
 
-  if (userRole === "PATIENT") {
-    const patientProfile = await prisma.patient.findUnique({
-      where: { userId },
-    });
-    if (!patientProfile || patientProfile.id !== patientId) {
-      throw new Error("You can only update your own profile");
-    }
+  if (userRole === "PATIENT" && patientId !== userId) {
+    throw new Error("You can only update your own profile");
   }
 
-  const data: Prisma.PatientUpdateInput = {};
+  const data: Record<string, any> = {};
 
-  if (payload.contactInfo !== undefined) data.contactInfo = payload.contactInfo;
-  if (payload.demographics !== undefined) data.demographics = payload.demographics;
+  if (payload.phone !== undefined) data.phone = payload.phone;
 
   if (userRole === "ADMIN") {
     if (payload.name !== undefined) data.name = payload.name;
     if (payload.gender !== undefined) data.gender = payload.gender;
-    if (payload.dob !== undefined) data.dob = new Date(payload.dob);
+    if (payload.dateOfBirth !== undefined) data.dateOfBirth = new Date(payload.dateOfBirth);
   }
 
   const patient = await prisma.patient.update({
@@ -123,11 +107,10 @@ const updatePatient = async (
     select: {
       id: true,
       name: true,
+      email: true,
       gender: true,
-      dob: true,
-      contactInfo: true,
-      demographics: true,
-      user: { select: { email: true } },
+      dateOfBirth: true,
+      phone: true,
     },
   });
 
@@ -139,21 +122,18 @@ const searchPatients = async (
   userId: string,
   userRole: string,
 ) => {
-  const where: Prisma.PatientWhereInput = { isActive: true };
+  const where: Record<string, any> = {};
 
   if (userRole === "DOCTOR") {
-    const doctor = await prisma.doctor.findUnique({ where: { userId } });
-    if (doctor) {
-      const assignedPatientIds = await prisma.appointment.findMany({
-        where: { doctorId: doctor.id },
-        select: { patientId: true },
-        distinct: ["patientId"],
-      });
-      where.id = { in: assignedPatientIds.map((a) => a.patientId) };
-    }
+    const assignedPatientIds = await prisma.appointment.findMany({
+      where: { doctorId: userId },
+      select: { patientId: true },
+      distinct: ["patientId"],
+    });
+    where.id = { in: assignedPatientIds.map((a) => a.patientId) };
   }
 
-  const filters: Prisma.PatientWhereInput[] = [];
+  const filters: Record<string, any>[] = [];
 
   if (query.name) {
     filters.push({ name: { contains: query.name, mode: "insensitive" } });
@@ -192,10 +172,10 @@ const searchPatients = async (
     select: {
       id: true,
       name: true,
+      email: true,
       gender: true,
-      dob: true,
-      contactInfo: true,
-      user: { select: { email: true } },
+      dateOfBirth: true,
+      phone: true,
     },
     orderBy: { name: "asc" },
   });

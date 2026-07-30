@@ -1,13 +1,13 @@
 model MedicalRecord {
-  id            String   @id @default(cuid())
-  patientId     String   @map("patient_id")
-  appointmentId String   @unique @map("appointment_id")
-  clinicalNotes String?  @map("clinical_notes")
-  createdAt     DateTime @default(now()) @map("created_at")
+  id        String   @id @default(uuid())
+  patientId String   @map("patient_id")
+  doctorId  String   @map("doctor_id")
+  notes     String
+  createdAt DateTime @default(now()) @map("created_at")
 
-  patient     Patient     @relation(fields: [patientId], references: [id])
-  appointment Appointment @relation(fields: [appointmentId], references: [id])
-  diagnoses   Diagnosis[]
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  doctor    Doctor     @relation(fields: [doctorId], references: [id])
+  diagnoses Diagnosis[]
 
   @@map("medical_records")
 }

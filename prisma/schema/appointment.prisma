@@ -1,16 +1,14 @@
 model Appointment {
-  id        String            @id @default(cuid())
-  patientId String            @map("patient_id")
-  doctorId  String            @map("doctor_id")
-  datetime  DateTime
-  status    AppointmentStatus @default(BOOKED)
-  createdAt DateTime          @default(now()) @map("created_at")
-  updatedAt DateTime          @updatedAt @map("updated_at")
+  id          String             @id @default(uuid())
+  patientId   String             @map("patient_id")
+  doctorId    String             @map("doctor_id")
+  scheduledAt DateTime           @map("scheduled_at")
+  status      AppointmentStatus  @default(BOOKED)
+  createdAt   DateTime           @default(now()) @map("created_at")
 
-  patient        Patient         @relation(fields: [patientId], references: [id])
-  doctor         Doctor          @relation(fields: [doctorId], references: [id])
-  medicalRecord  MedicalRecord?
-  claim Claim?
+  patient Patient         @relation(fields: [patientId], references: [id])
+  doctor  Doctor          @relation(fields: [doctorId], references: [id])
+  claim   InsuranceClaim?
 
   @@map("appointments")
 }

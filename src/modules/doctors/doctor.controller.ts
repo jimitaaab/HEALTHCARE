@@ -43,34 +43,7 @@ const getDoctorById = catchAsync(
   },
 );
 
-const getAvailability = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id as string;
-    const { date } = req.query;
-
-    if (!date) {
-      return res.status(httpStatus.BAD_REQUEST).json({
-        success: false,
-        statusCode: httpStatus.BAD_REQUEST,
-        message: "Date query parameter is required",
-      });
-    }
-
-    const result = await doctorService.getAvailability(id, {
-      date: date as string,
-    });
-
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Availability retrieved successfully",
-      data: result,
-    });
-  },
-);
-
 export const doctorController = {
   getAllDoctors,
   getDoctorById,
-  getAvailability,
 };

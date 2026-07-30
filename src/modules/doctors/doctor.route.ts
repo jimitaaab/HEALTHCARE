@@ -1,12 +1,10 @@
 import { Router } from "express";
 import { doctorController } from "./doctor.controller";
-import { Role } from "../../../generated/prisma/client";
 import auth from "../../middleware/auth.middleware";
 
 const router = Router();
 
-router.get("/", auth(Role.PATIENT, Role.RECEPTIONIST, Role.ADMIN), doctorController.getAllDoctors);
-router.get("/:id", auth(Role.PATIENT, Role.RECEPTIONIST, Role.DOCTOR, Role.ADMIN), doctorController.getDoctorById);
-router.get("/:id/availability", auth(Role.PATIENT, Role.RECEPTIONIST), doctorController.getAvailability);
+router.get("/", auth("PATIENT", "RECEPTIONIST", "ADMIN"), doctorController.getAllDoctors);
+router.get("/:id", auth("PATIENT", "RECEPTIONIST", "DOCTOR", "ADMIN"), doctorController.getDoctorById);
 
 export const doctorRoutes = router;

@@ -3,11 +3,11 @@ import { AppointmentStatus } from "../../../generated/prisma/client";
 export interface CreateAppointmentPayload {
   patientId: string;
   doctorId: string;
-  datetime: string;
+  scheduledAt: string;
 }
 
 export interface UpdateAppointmentPayload {
-  datetime?: string;
+  scheduledAt?: string;
   status?: AppointmentStatus;
 }
 
@@ -22,6 +22,6 @@ export interface AppointmentFilters {
 export interface OverridePayload {
   patientId: string;
   doctorId: string;
-  datetime: string;
+  scheduledAt: string;
   reason: string;
 }
