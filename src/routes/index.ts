@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authRoutes } from "../modules/auth/auth.routes";
 import { doctorRoutes } from "../modules/doctors/doctor.route";
 import { patientRoutes } from "../modules/patients/patient.route";
 import { appointmentRoutes } from "../modules/appointments/appointment.route";
@@ -7,6 +8,7 @@ import { diagnosisRoutes } from "../modules/diagnoses/diagnosis.route";
 
 const router = Router();
 
+router.use("/auth", authRoutes);
 router.use("/doctors", doctorRoutes);
 router.use("/patients", patientRoutes);
 router.use("/patients", medicalRecordRoutes);

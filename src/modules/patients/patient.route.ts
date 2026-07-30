@@ -1,30 +1,35 @@
 import { Router } from "express";
 import { patientController } from "./patient.controller";
 import auth from "../../middleware/auth.middleware";
+import requireRole from "../../middleware/role.middleware";
 
 const router = Router();
 
 router.get(
   "/search",
-  auth("DOCTOR", "RECEPTIONIST"),
+  auth,
+  requireRole("DOCTOR", "RECEPTIONIST"),
   patientController.searchPatients,
 );
 
 router.get(
   "/",
-  auth("RECEPTIONIST", "ADMIN"),
+  auth,
+  requireRole("RECEPTIONIST", "ADMIN"),
   patientController.getAllPatients,
 );
 
 router.get(
   "/:id",
-  auth("PATIENT", "DOCTOR", "RECEPTIONIST", "ADMIN"),
+  auth,
+  requireRole("PATIENT", "DOCTOR", "RECEPTIONIST", "ADMIN"),
   patientController.getPatientById,
 );
 
 router.patch(
   "/:id",
-  auth("PATIENT", "ADMIN"),
+  auth,
+  requireRole("PATIENT", "ADMIN"),
   patientController.updatePatient,
 );
 

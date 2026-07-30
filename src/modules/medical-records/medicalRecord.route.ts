@@ -1,18 +1,21 @@
 import { Router } from "express";
 import { medicalRecordController } from "./medicalRecord.controller";
 import auth from "../../middleware/auth.middleware";
+import requireRole from "../../middleware/role.middleware";
 
 const router = Router();
 
 router.get(
   "/:id/history",
-  auth("PATIENT", "DOCTOR"),
+  auth,
+  requireRole("PATIENT", "DOCTOR"),
   medicalRecordController.getPatientHistory,
 );
 
 router.post(
   "/:id/records",
-  auth("DOCTOR"),
+  auth,
+  requireRole("DOCTOR"),
   medicalRecordController.createMedicalRecord,
 );
 
