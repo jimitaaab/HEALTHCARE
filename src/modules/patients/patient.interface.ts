@@ -16,3 +16,12 @@ export interface PatientSearchQuery {
   condition?: string;
   medication?: string;
 }
+
+export interface BookAppointmentPayload {
+  doctorId: string;
+  scheduledAt: string;
+}
+
+export interface RescheduleAppointmentPayload {
+  scheduledAt: string;
+}
