@@ -9,17 +9,25 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/src/server.js",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --forceExit --detectOpenHandles",
+    "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --forceExit --detectOpenHandles --coverage"
   },
   "devDependencies": {
+    "@jest/globals": "^30.4.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.0.1",
     "@types/pg": "^8.20.0",
+    "@types/supertest": "^7.2.1",
+    "cross-env": "^10.1.0",
+    "jest": "^30.4.2",
     "prisma": "^7.8.0",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.12",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   },
