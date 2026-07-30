@@ -7,16 +7,17 @@ export interface RegisterPayload {
   phone?: string;
 }
 
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
 export interface AdminSignupPayload {
   name: string;
   email: string;
   password: string;
 }
 
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
 
 export interface AuthResponse {
   accessToken: string;

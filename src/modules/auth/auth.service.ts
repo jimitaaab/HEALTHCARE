@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../config/prisma";
 import config from "../../config/env";
-import { RegisterPayload, AdminSignupPayload, LoginPayload, AuthResponse } from "./auth.interface";
+import { RegisterPayload, LoginPayload, AuthResponse, AdminSignupPayload ,} from "./auth.interface";
 
 const hashPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, Number(config.bcryptSaltRounds));
@@ -93,6 +93,8 @@ const adminSignup = async (payload: AdminSignupPayload): Promise<AuthResponse> =
   };
 };
 
+
+
 const adminLogin = async (payload: LoginPayload): Promise<AuthResponse> => {
   const admin = await prisma.admin.findUnique({ where: { email: payload.email } });
   if (!admin) throw new Error("Invalid admin credentials");
@@ -111,6 +113,6 @@ const adminLogin = async (payload: LoginPayload): Promise<AuthResponse> => {
 export const authService = {
   register,
   login,
-  adminSignup,
   adminLogin,
+  adminSignup
 };

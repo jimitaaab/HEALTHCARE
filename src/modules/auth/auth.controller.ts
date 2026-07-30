@@ -73,6 +73,6 @@ const adminLogin = catchAsync(
 export const authController = {
   register,
   login,
-  adminSignup,
   adminLogin,
+  adminSignup
 };
