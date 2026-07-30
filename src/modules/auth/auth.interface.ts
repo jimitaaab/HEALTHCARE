@@ -1,10 +1,16 @@
-export interface SignupPayload {
+export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
   gender: string;
   dateOfBirth: string;
   phone?: string;
+}
+
+export interface AdminSignupPayload {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface LoginPayload {
